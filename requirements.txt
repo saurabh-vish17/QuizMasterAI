@@ -1,0 +1,14 @@
+# QuizMaster AI — Python Dependencies
+# Install with: pip install -r requirements.txt
+#
+# Standard library modules used (no install needed):
+#   tkinter, sqlite3, hashlib, os, sys, re, datetime, json
+
+# Environment variable management
+python-dotenv>=1.0.0
+
+# Data visualization for analytics charts
+matplotlib>=3.8.0
+
+# Google Gemini AI SDK (LLM features)
+google-generativeai>=0.7.0
