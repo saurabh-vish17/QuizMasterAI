@@ -658,7 +658,7 @@ class AdminPanelScreen(tk.Frame):
         tree_frame.pack(fill="both", expand=True)
 
         cols = ("id", "category", "topic", "difficulty", "question_text", "correct_answer")
-        self.tree_ai = ttk.Treeview(tree_frame, columns=cols, show="headings", selectmode="browse")
+        self.tree_ai = ttk.Treeview(tree_frame, columns=cols, show="headings", selectmode="extended")
 
         self.tree_ai.heading("id", text="ID")
         self.tree_ai.heading("category", text="Category")
@@ -779,21 +779,35 @@ class AdminPanelScreen(tk.Frame):
     def _on_approve_ai(self):
         selected = self.tree_ai.selection()
         if not selected:
-            messagebox.showwarning("Selection Required", "Please select an AI question to approve.")
+            messagebox.showwarning("Selection Required", "Please select one or more AI questions to approve.")
             return
-        self._approve_by_id(int(selected[0]))
+
+        count = 0
+        for item in selected:
+            res = self.quiz_service.approve_ai_question(int(item))
+            if res.get("success"):
+                count += 1
+                
+        messagebox.showinfo("Approved", f"Successfully approved {count} questions.")
+        self.load_ai_queue()
+        self.load_questions()
 
     def _on_reject_ai(self):
         selected = self.tree_ai.selection()
         if not selected:
-            messagebox.showwarning("Selection Required", "Please select an AI question to reject.")
+            messagebox.showwarning("Selection Required", "Please select one or more AI questions to reject.")
             return
 
-        ai_id = int(selected[0])
         confirm = messagebox.askyesno(
             "Confirm Reject",
-            f"Are you sure you want to reject and discard pending AI Question #{ai_id}?",
+            f"Are you sure you want to reject and discard {len(selected)} pending AI Question(s)?",
             icon="warning"
         )
         if confirm:
-            self._reject_by_id(ai_id)
+            count = 0
+            for item in selected:
+                res = self.quiz_service.reject_ai_question(int(item))
+                if res.get("success"):
+                    count += 1
+            messagebox.showinfo("Rejected", f"Successfully rejected {count} questions.")
+            self.load_ai_queue()

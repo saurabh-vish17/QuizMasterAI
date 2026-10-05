@@ -92,7 +92,7 @@ class AIService:
 
         def worker():
             try:
-                response = self.genai_client.generate_content(prompt)
+                response = self.genai_client.generate_content(prompt, generation_config={"temperature": 0.9})
                 return response.text if response else None
             except Exception as ex:
                 logger.error(f"Exception inside worker: {ex}")
@@ -148,8 +148,8 @@ class AIService:
         random_seed = random.randint(10000, 99999)
         
         prompt = f"""
-Return ONLY a valid JSON array containing {count} UNIQUE and DIVERSE multiple-choice questions for the following specification.
-Ensure these questions are completely novel, covering different angles or sub-concepts, and have not been asked before.
+Return ONLY a valid JSON array containing {count} UNIQUE, DISTINCT and DIVERSE multiple-choice questions for the following specification.
+Ensure EVERY SINGLE question in the array is completely novel, covering different angles or sub-concepts, and NO duplicate questions are allowed.
 
 Category: {category}
 Topic: {topic}
