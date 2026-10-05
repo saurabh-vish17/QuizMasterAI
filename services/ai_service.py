@@ -148,25 +148,37 @@ class AIService:
         random_seed = random.randint(10000, 99999)
         
         prompt = f"""
-Return ONLY a valid JSON array containing {count} UNIQUE, DISTINCT and DIVERSE multiple-choice questions for the following specification.
-Ensure EVERY SINGLE question in the array is completely novel, covering different angles or sub-concepts, and NO duplicate questions are allowed.
+I need {count} completely different multiple-choice questions about the following topic.
+You must return a raw JSON array containing exactly {count} objects.
+EACH question MUST cover a completely different sub-topic or angle. Do not repeat questions or concepts. Ensure all {count} questions are unique.
 
 Category: {category}
 Topic: {topic}
 Difficulty: {difficulty}
-Randomization Seed: {random_seed}
+Random Seed (to ensure variety): {random_seed}
 
-JSON Format per item:
-{{
-    "question_text": "Question text here?",
-    "option_a": "Option A text",
-    "option_b": "Option B text",
-    "option_c": "Option C text",
-    "option_d": "Option D text",
-    "correct_answer": "A",
-    "explanation": "Clear explanation of why this answer is correct."
-}}
-        """.strip()
+Provide the output strictly as a JSON array of objects. Use this EXACT schema for EACH object:
+[
+  {{
+      "question_text": "First unique question text here?",
+      "option_a": "Option A text",
+      "option_b": "Option B text",
+      "option_c": "Option C text",
+      "option_d": "Option D text",
+      "correct_answer": "A",
+      "explanation": "Clear explanation of why this answer is correct."
+  }},
+  {{
+      "question_text": "Second unique question covering a DIFFERENT angle?",
+      "option_a": "...",
+      "option_b": "...",
+      "option_c": "...",
+      "option_d": "...",
+      "correct_answer": "B",
+      "explanation": "..."
+  }}
+]
+"""
 
         try:
             raw_resp = self._call_gemini(prompt)
